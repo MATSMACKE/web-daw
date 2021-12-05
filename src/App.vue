@@ -1,40 +1,85 @@
 <template>
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-  <button @click="inc">{{value}}</button>
+    <div class="container">
+        <ToolBar/>
+        <MainBody/>
+        <ChannelRack v-if="viewsOpen.channelRack"/>
+    </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
+import {defineComponent} from 'vue'
+import ToolBar from './components/ToolBar.vue'
+import ChannelRack from './components/ChannelRack.vue'
+import MainBody from './components/MainBody.vue'
 import {SOT} from './SOT'
-import * as wasm from './lib/pkg/lib'
-import {audio} from './audio'
 
 export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  },
-  data() {
-    return SOT
-  },
-  computed: {
-    value(): Number {
-      //return wasm.add(this.count, 1)
-      return this.count
-    }
-  },
-  methods: {
-    inc(): void {
-      this.count = this.gen.generate(Float32Array.from([0., 0., 0.]))[0]
-      console.log(this.gen.generate(Float32Array.from([0., 0., 0.])))
+    name: 'App',
+    components: {
+        ToolBar,
+        ChannelRack,
+        MainBody
+    },
+    data() {
+        return SOT
+    },
+    computed: {},
+    methods: {
 
-      audio()
     }
-  }
 })
 </script>
 
 <style lang="scss">
+body {
+    margin: 0;
+    background-color: #1b1b1b;
+    overflow: hidden;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+#app {
+    font-family: Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #DDDDDD;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+button {
+    color: #DDDDDD;
+    padding: 0.5rem;
+    cursor: pointer;
+    width: 14rem;
+    background-color: rgba(0, 0, 0, 0);
+    border: solid #DDDDDD 1px;
+    border-radius: 0.5rem;
+}
+
+ChannelRack {
+    align-self: flex-end;
+    height: 200px;
+    flex-shrink: 0;
+}
+
+MainBody {
+    flex-grow: 1;
+}
+
+ToolBar {
+}
 
 </style>
