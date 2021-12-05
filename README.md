@@ -12,5 +12,5 @@ npm run serve
 
 ### Compiles to Electron and optimizes for production
 ```
-npm run build
+npm run electron:build
 ```
