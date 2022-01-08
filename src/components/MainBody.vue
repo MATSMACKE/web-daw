@@ -3,7 +3,7 @@
         <div class="mainbody-container">
             <button @click="playPause">{{ playing ? "Pause" : "Play" }}</button>
             <button @click="addTrack">Add track</button>
-            <h1>Number of tracks: {{ track_number }}</h1>
+            <h1>Number of tracks: {{ tracks.length }}</h1>
             <button @click="toggleChannelRack">{{ viewsOpen.channelRack ? "Hide Channel Rack" : "Show Channel Rack" }}
             </button>
             <button @click="changeNoise('White')">White</button>
@@ -11,12 +11,15 @@
             <button @click="changeNoise('Square')">Square</button>
             <input id="osc-freq" type="range" v-model="frequency" min='20' max='1000'>
             <label for="osc-freq">Oscilator Frequency</label>
-            <input id="filter-freq" type="range" v-model="filterFreq" min='20' max='10000'>
+            <input id="filter-freq" type="range" v-model="filterFreq" min='20' max='20000'>
             <label for="filter-freq">Filter Frequency</label>
             <input id="filter-strength" type="range" v-model="filterStrength" min='-24' max='24'>
             <label for="filter-strength">Filter Strength</label>
             <input id="filter-q" type="range" v-model="filterQ" min='0.01' max='12'>
             <label for="filter-q">Filter Q</label>
+            <input id="gain" type="range" v-model="gain" min='-36' max='36'>
+            <label for="gain">Gain</label>
+            <h1>Frequency: {{Math.pow((filterFreq - 20) / 19980, 2.5) * 19980 + 20}} Hz</h1>
         </div>
         <div class="tracks-container">
 
@@ -46,8 +49,6 @@ export default defineComponent({
             }
         },
         addTrack(): void {
-            this.tracks.push(new Track((this.tracks.length + 1).toString()))
-            this.track_number++
         },
         toggleChannelRack(): void {
             this.viewsOpen.channelRack = !this.viewsOpen.channelRack

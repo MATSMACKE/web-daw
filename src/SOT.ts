@@ -13,13 +13,13 @@ export const SOT = reactive({
         channelRack: true
     },
     playing: false,
-    tracks: <Track[]>[],
-    track_number: 0,
+    tracks: <Track[]>[new Track("New", "blue")],
     selected_track: 0,
     frequency: 440,
     filterFreq: 440,
     filterStrength: 1,
     filterQ: 1,
+    gain: 2,
     typeOfNoise: NoiseType.White,
     gen: BufferGen.new(BigInt(2)),
 })

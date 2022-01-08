@@ -1,8 +1,7 @@
 use wasm_bindgen::prelude::*;
 use oorandom;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
+// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
@@ -72,75 +71,26 @@ impl Oscillator {
     }
 }
 
+/// Function to gain the signal by a dB amount
 #[wasm_bindgen]
-pub fn sine(mut arr: Vec<f32>, freq: f32, samplerate: u32) -> Vec<f32> {
-    let mut x: f32 = 0.;
-    let mult = std::f32::consts::TAU * freq / (samplerate as f32);
-    for i in &mut arr {
-        *i = 0.5 * (x * mult).sin();
-        x += 1.;
+pub fn gain_db(mut input: Vec<f32>, gain_db: f32) -> Vec<f32> {
+    let gain_abs = (10. as f32).powf(gain_db * 0.05);
+    for sample in &mut input {
+        *sample = *sample * gain_abs;
     }
-    arr
+    input
 }
 
+/// Function to gain the signal by a float (-1. -> 1.)
 #[wasm_bindgen]
-pub fn square(mut arr: Vec<f32>, freq: f32, samplerate: u32) -> Vec<f32> {
-    let mut x: f32 = 0.;
-    let mult = std::f32::consts::TAU * freq / (samplerate as f32);
-    for i in &mut arr {
-        *i = 0.5 * ( if (x * mult).sin() > 0. { 1. } else { -1. } );
-        x += 1.;
+pub fn gain_abs(mut input: Vec<f32>, gain: f32) -> Vec<f32> {
+    for sample in &mut input {
+        *sample = *sample * gain;
     }
-    arr
+    input
 }
 
-#[wasm_bindgen]
-pub struct LowPassFilter {
-    samplerate: f32,
-    frequency: f32,
-    temp: f32,
-}
-
-#[wasm_bindgen]
-impl LowPassFilter {
-    pub fn new(start_freq: f32, samplerate: f32, filter_type: FilterType) -> Self {
-        LowPassFilter {
-            samplerate,
-            frequency: start_freq,
-            temp: 0.0,
-        }
-    }
-
-    pub fn filter(&mut self, mut input: Vec<f32>, freq: f32) -> Vec<f32> {
-        // https://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
-
-        self.frequency = freq;
-        let rc: f32 = 1.0 / (self.frequency * std::f32::consts::TAU);
-        let time_per_sample = 1.0 / self.samplerate;
-        let smoothing_factor = time_per_sample / (rc + time_per_sample);
-
-        for sample in &mut input {
-            *sample = self.temp + smoothing_factor * (*sample - self.temp);
-            self.temp = *sample;
-        }
-        input
-    }
-
-    pub fn dyn_filter(&mut self, mut input: Vec<f32>, freq: Vec<f32>) -> Vec<f32> {
-        self.frequency = freq[0];
-        let time_per_sample = 1.0 / self.samplerate;
-
-        for (i, sample) in input.iter_mut().enumerate() {
-            let rc: f32 = 1.0 / (freq[i] * std::f32::consts::TAU);
-            let smoothing_factor = time_per_sample / (rc + time_per_sample);
-
-            *sample = self.temp + smoothing_factor * (*sample - self.temp);
-            self.temp = *sample;
-        }
-        input
-    }
-}
-
+/// Enum to ease handling of different types of filters
 #[wasm_bindgen]
 pub enum FilterType {
     Lowpass,
@@ -148,9 +98,11 @@ pub enum FilterType {
     Peak,
     LowShelf,
     HighShelf,
-    BandPass
+    BandPass,
+    Notch
 }
 
+/// Struct to store the state
 #[wasm_bindgen]
 pub struct RbjFilter {
     filter_type: FilterType,
@@ -180,8 +132,7 @@ impl RbjFilter {
     pub fn calculate_coefficients(&mut self, freq: f32, q: f32, gain: f32) {
         let omega = std::f32::consts::TAU * freq / self.sample_rate;
         let cos_omega = omega.cos();
-        let sin_omega = omega.sin();
-        let alpha = sin_omega / (2. * q);
+        let alpha = omega.sin() / (2. * q);
 
         let b0: f32;
         let b1: f32;
@@ -238,9 +189,17 @@ impl RbjFilter {
                 a2 = (a + 1.) - (a - 1.) * cos_omega - 2. * a.sqrt() * alpha;
             },
             FilterType::BandPass => {
-                b0 = q * alpha;
+                b0 = alpha;
                 b1 = 0.;
-                b2 = -q * alpha;
+                b2 = -alpha;
+                a0 = 1. + alpha;
+                a1 = -2. * cos_omega;
+                a2 = 1. - alpha;
+            },
+            FilterType::Notch => {
+                b0 = 1.;
+                b1 = -2. * cos_omega;
+                b2 = 1.;
                 a0 = 1. + alpha;
                 a1 = -2. * cos_omega;
                 a2 = 1. - alpha;

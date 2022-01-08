@@ -10,7 +10,7 @@
 import {defineComponent} from 'vue'
 import ToolBar from './components/ToolBar.vue'
 import ChannelRack from './components/ChannelRack.vue'
-import MainBody from './components/MainBody.vue'
+import MainBody from './components/MainComp.vue'
 import {SOT} from './SOT'
 
 export default defineComponent({
@@ -25,8 +25,12 @@ export default defineComponent({
     },
     computed: {},
     methods: {
+        mounted() {
+            document.addEventListener("keydown", (e) => {
 
-    }
+            })
+        }
+    },
 })
 </script>
 
@@ -55,9 +59,11 @@ body {
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100vh;
 }
+
+
 
 button {
     color: #DDDDDD;
@@ -67,19 +73,6 @@ button {
     background-color: rgba(0, 0, 0, 0);
     border: solid #DDDDDD 1px;
     border-radius: 0.5rem;
-}
-
-ChannelRack {
-    align-self: flex-end;
-    height: 200px;
-    flex-shrink: 0;
-}
-
-MainBody {
-    flex-grow: 1;
-}
-
-ToolBar {
 }
 
 </style>
