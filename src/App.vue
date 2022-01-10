@@ -4,6 +4,7 @@
         <MainBody/>
         <ChannelRack v-if="viewsOpen.channelRack"/>
     </div>
+    <ContextMenu v-if="viewsOpen.contextMenu"></ContextMenu>
 </template>
 
 <script lang="ts">
@@ -11,14 +12,16 @@ import {defineComponent} from 'vue'
 import ToolBar from './components/ToolBar.vue'
 import ChannelRack from './components/ChannelRack.vue'
 import MainBody from './components/MainComp.vue'
-import {SOT} from './SOT'
+import ContextMenu from "./components/ContextMenu.vue"
+import {SOT} from '@/SOT'
 
 export default defineComponent({
     name: 'App',
     components: {
         ToolBar,
         ChannelRack,
-        MainBody
+        MainBody,
+        ContextMenu,
     },
     data() {
         return SOT
@@ -26,7 +29,7 @@ export default defineComponent({
     computed: {},
     methods: {
         mounted() {
-            document.addEventListener("keydown", (e) => {
+            document.addEventListener("click", (e) => {
 
             })
         }

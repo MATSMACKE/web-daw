@@ -1,25 +1,14 @@
 import { reactive } from "vue";
 import { BufferGen } from "./lib/pkg/lib";
+import { NoiseType } from "@/audio"
 import {Track} from './track'
-
-export enum NoiseType {
-    White = 0,
-    Sine,
-    Square
-}
 
 export const SOT = reactive({
     viewsOpen: {
-        channelRack: true
+        channelRack: true,
+        contextMenu: false
     },
     playing: false,
     tracks: <Track[]>[new Track("New", "blue")],
-    selected_track: 0,
-    frequency: 440,
-    filterFreq: 440,
-    filterStrength: 1,
-    filterQ: 1,
-    gain: 2,
-    typeOfNoise: NoiseType.White,
-    gen: BufferGen.new(BigInt(2)),
+    selected_track: 0
 })

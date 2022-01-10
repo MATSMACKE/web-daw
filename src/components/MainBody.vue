@@ -29,8 +29,8 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue'
-import {play, stop} from "@/audio";
-import {SOT, NoiseType} from "@/SOT";
+import {play, stop, NoiseType} from "@/audio";
+import {SOT} from "@/SOT";
 import {Track} from "@/track";
 
 export default defineComponent({

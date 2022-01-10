@@ -1,4 +1,5 @@
 import {Plugin} from './plugin'
+import {SimpleGenerator} from "@/plugins/simple_gen"
 
 export class Track {
     name: string
@@ -14,6 +15,6 @@ export class Track {
     }
 
     new_plugin(name: string): void {
-        this.plugins.push(new Plugin())
+        this.plugins.push(new SimpleGenerator())
     }
 }

@@ -1,12 +1,12 @@
 type ProcessorFunction = (input: Float32Array) => Float32Array
 
-class Processor {
-    state: object
+export class Processor {
+    state: any
     process: ProcessorFunction
 
-    constructor(process: ProcessorFunction) {
+    constructor(process: ProcessorFunction, state: Object) {
         this.process = process
-        this.state = {}
+        this.state = state
     }
 }
 
@@ -15,5 +15,12 @@ export class Plugin {
 
     constructor() {
         this.processors = []
+    }
+
+    process(input: Float32Array): Float32Array {
+        for (let processor in this.processors) {
+            input = this.processors[processor].process(input)
+        }
+        return input
     }
 }

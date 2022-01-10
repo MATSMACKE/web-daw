@@ -1,9 +1,15 @@
 import * as wasm from './lib/pkg/lib' // import wasm
-import { readonly } from "vue"
-import {SOT, NoiseType} from './SOT'
+import { reactive } from "vue"
+import {SOT} from './SOT'
 import * as buffer from "buffer"; // import data from SOT.ts
 
-const data = readonly(SOT)
+export enum NoiseType {
+    White = 0,
+    Sine,
+    Square
+}
+
+let data = reactive(SOT)
 
 const bufferSize = 512
 
@@ -11,6 +17,7 @@ let audioCtx = new (window.AudioContext)()
 
 let startTime: number
 
+/*
 // Create a white noise generator
 let gen = wasm.BufferGen.new(BigInt(9))
 
@@ -19,7 +26,7 @@ let filters = [wasm.RbjFilter.new(wasm.FilterType.Peak, audioCtx.sampleRate), wa
 
 // Create oscillators
 let oscillators = [wasm.Oscillator.new(audioCtx.sampleRate), wasm.Oscillator.new(audioCtx.sampleRate)]
-
+*/
 let buffers_rendered = 0
 
 let sources: AudioBufferSourceNode[] = []
@@ -29,12 +36,13 @@ function playBuffer() {
     sources.push(new AudioBufferSourceNode(audioCtx))
 
     // Create an empty three-second stereo buffer at the sample rate of the AudioContext
-    let myArrayBuffer = audioCtx.createBuffer(2, bufferSize, audioCtx.sampleRate);
+    let buffer = audioCtx.createBuffer(2, bufferSize, audioCtx.sampleRate);
 
-    for (let channel = 0; channel < myArrayBuffer.numberOfChannels; channel++) {
+    for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
         // Get empty channel
-        let nowBuffering = myArrayBuffer.getChannelData(channel)
+        let nowBuffering = buffer.getChannelData(channel)
 
+        /*
         // White noise
         if (data.typeOfNoise === NoiseType.White) nowBuffering = gen.generate(nowBuffering)
 
@@ -48,13 +56,21 @@ function playBuffer() {
         nowBuffering = filters[channel].filter(nowBuffering)
 
         nowBuffering = wasm.gain_db(nowBuffering, data.gain)
+        */
+
+        for (let track in SOT.tracks) {
+            for (let plugin in SOT.tracks[track].plugins) {
+                nowBuffering = SOT.tracks[track].plugins[plugin].process(nowBuffering)
+                
+            }
+        }
 
         // Add generated buffer to the AudioBuffer
-        myArrayBuffer.copyToChannel(nowBuffering, channel)
+        buffer.copyToChannel(nowBuffering, channel)
     }
 
     // Put buffer into source
-    sources[buffers_rendered].buffer = myArrayBuffer
+    sources[buffers_rendered].buffer = buffer
 
     // Connect
     sources[buffers_rendered].connect(audioCtx.destination)
@@ -80,6 +96,7 @@ function fillBuffers() {
 export function play() {
     startTime = audioCtx.currentTime
     fillBuffers()
+    
 }
 
 export function stop() {

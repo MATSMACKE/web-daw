@@ -1,26 +1,34 @@
 <template>
     <div class="toolbar-container">
-        <h5 @mouseenter="show = true" @mouseleave="show = false">DAW</h5>
+        <h5>DAW</h5>
         <h5>File</h5>
         <h5>Edit</h5>
         <h5>Select</h5>
         <h5>Insert</h5>
-
-        <h5 v-if="show">test2</h5>
+        <button @click="playPause()">PLAY</button>
     </div>
 </template>
 
 <script lang="ts">
 import {defineComponent} from 'vue'
+import {play, stop} from "@/audio";
+import {SOT} from "@/SOT"
 
 export default defineComponent({
     name: 'ToolBar',
-    props: {
-        msg: String
-    },
     data() {
-        return {
-            show: false
+        return SOT
+    },
+    methods: {
+        playPause(): void {
+            console.log("playpause")
+            if (!this.playing) {
+                this.playing = true
+                play()
+            } else {
+                this.playing = false
+                stop()
+            }
         }
     }
 })
