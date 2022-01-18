@@ -10,5 +10,6 @@ export const SOT = reactive({
     },
     playing: false,
     tracks: <Track[]>[new Track("New", "blue")],
-    selected_track: 0
+    selected_track: 0,
+    contextmenu: false
 })

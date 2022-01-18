@@ -58,12 +58,16 @@ function playBuffer() {
         nowBuffering = wasm.gain_db(nowBuffering, data.gain)
         */
 
+        let emptyBuffer = nowBuffering
+
         for (let track in SOT.tracks) {
+            let trackBuffer = emptyBuffer
             for (let plugin in SOT.tracks[track].plugins) {
-                nowBuffering = SOT.tracks[track].plugins[plugin].process(nowBuffering)
-                
+                trackBuffer = SOT.tracks[track].plugins[plugin].process(trackBuffer)
             }
+            nowBuffering = wasm.sum(nowBuffering, trackBuffer)
         }
+        console.log(nowBuffering)
 
         // Add generated buffer to the AudioBuffer
         buffer.copyToChannel(nowBuffering, channel)

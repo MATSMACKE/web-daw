@@ -5,7 +5,7 @@
         <h5>Edit</h5>
         <h5>Select</h5>
         <h5>Insert</h5>
-        <button @click="playPause()">PLAY</button>
+        <h5 @click="playPause()">{{playing ? "STOP" : "PLAY"}}</h5>
     </div>
 </template>
 
@@ -41,6 +41,8 @@ export default defineComponent({
     flex-direction: row;
     flex-basis: 1.5rem;
     flex-shrink: 0;
+    border-bottom: #3f3f3f 1px solid;
+
     h5 {
         margin-top: 0;
         padding-top: 0.2em;

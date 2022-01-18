@@ -29,9 +29,6 @@ export default defineComponent({
     computed: {},
     methods: {
         mounted() {
-            document.addEventListener("click", (e) => {
-
-            })
         }
     },
 })

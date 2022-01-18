@@ -90,6 +90,16 @@ pub fn gain_abs(mut input: Vec<f32>, gain: f32) -> Vec<f32> {
     input
 }
 
+#[wasm_bindgen]
+pub fn sum(mut buffer1: Vec<f32>, buffer2: Vec<f32>) -> Vec<f32> {
+    for (index, sample) in buffer1.iter_mut().enumerate() {
+        *sample = *sample + buffer2[index];
+    }
+    buffer1
+}
+
+
+
 /// Enum to ease handling of different types of filters
 #[wasm_bindgen]
 pub enum FilterType {

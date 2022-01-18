@@ -10,7 +10,7 @@ class SimpleGeneratorProcessor extends Processor {
         }
 
         this.process = (input: Float32Array) => {
-            return this.state.gen.generate(input)
+            return wasm.gain_abs(this.state.gen.generate(input), 0.5)
         }
     }
 }
@@ -19,5 +19,6 @@ export class SimpleGenerator extends Plugin {
     constructor() {
         super()
         this.processors = [new SimpleGeneratorProcessor()]
+        this.name = "White Noise"
     }
 }

@@ -1,5 +1,8 @@
 <template>
-  <slot></slot>
+  <div class="contextmenu" v-bind:style="{left: x + 'px', top: y + 'px'}">
+    <p>{{x}}, {{y}}</p>
+    <slot></slot>
+  </div>
 </template>
 
 <script lang="ts">
@@ -8,6 +11,10 @@ import { SOT } from "@/SOT"
 
 export default defineComponent({
   name: "ContextMenu",
+  props: {
+    x: Number,
+    y: Number
+  },
   data() {
     return SOT
   },
@@ -15,4 +22,10 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.contextmenu {
+  position: fixed;
+  left: 400;
+  top: 600
+}
+</style>

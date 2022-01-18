@@ -12,9 +12,11 @@ export class Processor {
 
 export class Plugin {
     processors: Processor[]
+    name: string
 
     constructor() {
         this.processors = []
+        this.name = "Generic Plugin"
     }
 
     process(input: Float32Array): Float32Array {
